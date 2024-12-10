@@ -3,12 +3,12 @@ use std::{fs::read_to_string, io};
 fn main() -> Result<(), io::Error> {
     let input = read_to_string("./input.txt")?;
     let grid = Grid::new(&input);
-    let part_one_result = grid.count();
+    let _part_one_result = grid.count();
 
     let cross_grid = Grid::with_diagonal_only(&input);
-    let _part_two_result = cross_grid.count();
+    let part_two_result = cross_grid.count();
 
-    println!("Total: {:?}", part_one_result);
+    println!("Total: {:?}", part_two_result);
 
     Ok(())
 }
@@ -67,7 +67,6 @@ fn get_directions(pos: Position, max_x: usize, max_y: usize, cross_only: bool) -
 }
 
 struct Grid {
-    // grid: Vec<Vec<char>>,
     grid: Vec<char>,
     width: usize,
     height: usize,
@@ -76,12 +75,7 @@ struct Grid {
 
 impl Grid {
     fn new(input: &str) -> Self {
-        // let mut matrix = vec![];
         let mut height = 0;
-        // for line in input.lines() {
-        //     width += 1;
-        //     matrix.push(line.trim().chars().collect());
-        // }
         let matrix: Vec<char> = input
             .lines()
             .flat_map(|line| {
@@ -122,10 +116,8 @@ impl Grid {
         if self.cross_only {
             for y in 0..self.height {
                 for x in 0..self.width {
-                    // if self.grid[y][x] == search_char {
                     if self.coord(x, y) == search_char {
                         // check both diags for SAM and MAS
-                        // let upleft = MAS || SAM && upright = SAM || MAS
                         if y > 0 && y < self.height - 1 && x > 0 && x < self.width - 1 {
                             // top-left to bottom-right
                             let up_left = (self.coord(x - 1, y - 1) == 'S'

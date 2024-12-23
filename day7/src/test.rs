@@ -105,7 +105,7 @@ mod test {
         ];
 
         assert_eq!(
-            find_solvable(&calibrations),
+            find_solvable(&calibrations, false),
             // turn vec into vec<&_>
             expected
                 .iter()

@@ -1,15 +1,22 @@
 #[cfg(test)]
 mod test {
+    use std::collections::HashMap;
+
     use crate::{checksum, Program};
 
     #[test]
     fn it_should_parse() {
         let input = "2333133121414131402";
         let programmes = Program::parse(&input);
+        let mut spaces = HashMap::new();
+        spaces.insert(1, vec![7, 9, 11, 13, 15]);
+        spaces.insert(0, vec![17]);
+        spaces.insert(3, vec![1, 3, 5]);
+
         assert_eq!(
             programmes,
             Program {
-                blocks: String::from("00...111...2...333.44.5555.6666.777.888899"),
+                // blocks: String::from("00...111...2...333.44.5555.6666.777.888899"),
                 free_count: 14,
                 list: vec![
                     "0", "0", ".", ".", ".", "1", "1", "1", ".", ".", ".", "2", ".", ".", ".", "3",
@@ -18,23 +25,29 @@ mod test {
                 ]
                 .iter()
                 .map(|s| s.to_string())
-                .collect()
+                .collect(),
+                spaces
             }
         );
 
         let input = "12345";
         let programmes = Program::parse(&input);
+        let mut spaces = HashMap::new();
+
+        spaces.insert(2, vec![1]);
+        spaces.insert(4, vec![3]);
+
         assert_eq!(
             programmes,
             Program {
-                blocks: String::from("0..111....22222"),
                 free_count: 6,
                 list: vec![
                     "0", ".", ".", "1", "1", "1", ".", ".", ".", ".", "2", "2", "2", "2", "2"
                 ]
                 .iter()
                 .map(|s| s.to_string())
-                .collect()
+                .collect(),
+                spaces
             }
         );
     }
@@ -143,5 +156,9 @@ mod test {
     }
 
     #[test]
-    fn it_should_defrag() {}
+    fn it_should_defrag() {
+        let input = "2333133121414131402";
+        let mut programme = Program::parse(&input);
+        programme.defrag();
+    }
 }

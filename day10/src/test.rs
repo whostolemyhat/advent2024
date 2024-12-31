@@ -10,7 +10,7 @@ mod test {
           9876";
         let map = Map::parse(&input);
 
-        assert_eq!(2, map.find_trail());
+        assert_eq!(1, map.find_trail());
     }
 
     #[test]
@@ -66,5 +66,42 @@ mod test {
                 Position { x: 1, y: 0 }
             ]
         );
+    }
+
+    mod part_two {
+        use crate::Map;
+
+        #[test]
+        fn it_should_rate_trails() {
+            let input = "9999909
+                         9943219
+                         9959929
+                         9965439
+                         9979949
+                         1187651
+                         1191111";
+            let map = Map::parse(input);
+            assert_eq!(3, map.rate_trails());
+
+            let input = "89010123
+                        78121874
+                        87430965
+                        96549874
+                        45678903
+                        32019012
+                        01329801
+                        10456732";
+            let map = Map::parse(input);
+            assert_eq!(81, map.rate_trails());
+
+            let input = "012345
+                         123456
+                         234567
+                         345678
+                         416789
+                         567891";
+            let map = Map::parse(input);
+            assert_eq!(227, map.rate_trails());
+        }
     }
 }

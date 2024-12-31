@@ -1,4 +1,4 @@
-use std::{env::args, fs::read_to_string, io};
+use std::{collections::VecDeque, env::args, fs::read_to_string, io};
 
 mod test;
 
@@ -96,18 +96,40 @@ impl Map {
 
     fn find_trail(&self) -> usize {
         let mut total = 0;
+        let mut trails = vec![];
 
         for pos in self.trailheads[..].iter() {
             let mut visited = vec![];
             let mut count = 0;
-            self.search(&mut visited, pos, &mut count);
+            trails.push(self.search(&mut visited, pos, &mut count));
             total += count;
         }
 
         total
     }
 
-    fn search(&self, visited: &mut Vec<Position>, current: &Position, count: &mut usize) {
+    fn rate_trails(&self) -> usize {
+        let mut total = 0;
+
+        for pos in self.trailheads[..].iter() {
+            let mut visited = vec![];
+            let mut count = 0;
+            let mut queue = VecDeque::new();
+            queue.push_back(*pos);
+            self.find_distinct(&mut visited, &mut queue, &mut count);
+            total += count;
+        }
+
+        total
+    }
+
+    // how many '9's can be reached? (dfs)
+    fn search(
+        &self,
+        visited: &mut Vec<Position>,
+        current: &Position,
+        count: &mut usize,
+    ) -> Vec<Position> {
         let neighbours = self.neighbours(&current);
         let val = self.map[self.coord(current)];
         if self.map[self.coord(current)] == 9 {
@@ -122,6 +144,35 @@ impl Map {
                 self.search(visited, &pos, count);
             }
         }
+
+        visited.to_vec()
+    }
+
+    // find distinct paths (bfs)
+    fn find_distinct(
+        &self,
+        visited: &mut Vec<Position>,
+        queue: &mut VecDeque<Position>,
+        count: &mut usize,
+    ) {
+        if queue.len() == 0 {
+            return;
+        }
+
+        let current = queue.pop_front().expect("Failed to get current pos");
+        let neighbours = self.neighbours(&current);
+        let val = self.map[self.coord(&current)];
+        if self.map[self.coord(&current)] == 9 {
+            *count += 1;
+        }
+
+        for pos in neighbours {
+            let neighbour_val = self.map[self.coord(&pos)];
+            if neighbour_val == val + 1 {
+                queue.push_back(pos);
+                self.find_distinct(visited, queue, count);
+            }
+        }
     }
 }
 
@@ -132,7 +183,8 @@ fn main() -> Result<(), io::Error> {
     let input = read_to_string(filename)?;
     let map = Map::parse(&input);
 
-    println!("Count: {:?}", map.find_trail());
+    println!("Part 1: {:?}", map.find_trail());
+    println!("Rating: {:?}", map.rate_trails());
 
     Ok(())
 }
